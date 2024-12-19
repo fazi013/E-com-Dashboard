@@ -2,6 +2,7 @@ const express =require('express');
 const cors = require('cors');
 require('./db/config');
 const users =require ('./db/user');
+const product =require('./db/product');
 const app =express();
 app.use(cors());
 app.use(express.json());
@@ -21,6 +22,8 @@ app.post('/register',async(req,res)=>{
 app.post ('/login',async(req,res)=>{
     if(req.body.email &&req.body.password){
         let user = await users.findOne(req.body);
+        user = user.toObject();
+    delete user.password;
  if (user){
     res.send(user);
  }else{
@@ -30,6 +33,13 @@ app.post ('/login',async(req,res)=>{
         res.send({result:'Record not Found'});
     }
  
+});
+
+app.post("/add-product",async(req,res)=>{
+    let products=new product(req.body);
+    let result = await products.save();
+    res.send(result);
+
 });
 
 
